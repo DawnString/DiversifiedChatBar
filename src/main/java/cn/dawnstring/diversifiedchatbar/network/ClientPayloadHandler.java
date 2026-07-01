@@ -17,7 +17,7 @@ public class ClientPayloadHandler
 {
 
     public static void handleSync(EmojiPayloads.EmojiSyncPayload payload, IPayloadContext context)
-{
+    {
         context.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             EmojiManager manager = EmojiManager.getInstance();
@@ -26,21 +26,21 @@ public class ClientPayloadHandler
             manager.clearServerEmoji();
 
             for (EmojiPayloads.EmojiEntry entry : payload.entries())
-{
+            {
                 try
-{
+                {
                     byte[] data = entry.imageData();
                     boolean isGif = isGifData(data);
 
                     if (isGif)
-{
+                    {
                         
                         manager.loadServerGif(entry.owner(), entry.shortcode(), data);
                     }
-else
-{
+                    else
+                    {
                         try (var in = new ByteArrayInputStream(data))
-{
+                        {
                             NativeImage image = NativeImage.read(in);
                             NativeImage processed = EmojiManager.compressIfNeededStatic(image);
                             int w = processed.getWidth();
@@ -60,8 +60,8 @@ else
                         }
                     }
                 }
-catch (IOException e)
-{
+                catch (IOException e)
+                {
                     DiversifiedChatBar.LOGGER.error("Failed to process server emoji {}: {}", entry.shortcode(), e.getMessage());
                 }
             }
@@ -70,7 +70,7 @@ catch (IOException e)
     }
 
     private static boolean isGifData(byte[] data)
-{
+    {
         if (data.length < 6) return false;
         String magic = new String(data, 0, 6, java.nio.charset.StandardCharsets.US_ASCII);
         return magic.equals("GIF87a") || magic.equals("GIF89a");

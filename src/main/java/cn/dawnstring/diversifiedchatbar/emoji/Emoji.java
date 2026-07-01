@@ -19,17 +19,17 @@ public class Emoji
     private final boolean animated;
 
     public Emoji(String shortcode, ResourceLocation textureLocation, int width, int height, Path filePath)
-{
+    {
         this(shortcode, textureLocation, width, height, filePath, Source.LOCAL, null, false);
     }
 
     public Emoji(String shortcode, ResourceLocation textureLocation, int width, int height, Path filePath, Source source, UUID ownerUUID)
-{
+    {
         this(shortcode, textureLocation, width, height, filePath, source, ownerUUID, false);
     }
 
     public Emoji(String shortcode, ResourceLocation textureLocation, int width, int height, Path filePath, Source source, UUID ownerUUID, boolean animated)
-{
+    {
         this.shortcode = shortcode;
         this.textureLocation = textureLocation;
         this.width = width;

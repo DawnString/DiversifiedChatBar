@@ -46,7 +46,7 @@ public class ChatScreenMixin
 
     @Inject(method = "render", at = @At("TAIL"))
     private void onRenderTail(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci)
-{
+    {
         EmojiManager manager = EmojiManager.getInstance();
         if (!manager.isLoaded()) return;
 
@@ -61,7 +61,7 @@ public class ChatScreenMixin
         int guiWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         int totalPages = Math.max(1, (int) Math.ceil((double) emojis.size() / EMOJIS_PER_PAGE));
         if (diversifiedchatbar$pickerPage >= totalPages)
-{
+        {
             diversifiedchatbar$pickerPage = totalPages - 1;
         }
 
@@ -78,7 +78,7 @@ public class ChatScreenMixin
         int endIndex = Math.min(startIndex + EMOJIS_PER_PAGE, emojis.size());
 
         for (int i = startIndex; i < endIndex; i++)
-{
+        {
             int indexInPage = i - startIndex;
             int col = indexInPage % PICKER_COLS;
             int row = indexInPage / PICKER_COLS;
@@ -91,7 +91,7 @@ public class ChatScreenMixin
             int oy = (EMOJI_CELL_SIZE - renderSize) / 2;
 
             if (mouseX >= ex && mouseX <= ex + EMOJI_CELL_SIZE && mouseY >= ey && mouseY <= ey + EMOJI_CELL_SIZE)
-{
+            {
                 guiGraphics.fill(ex, ey, ex + EMOJI_CELL_SIZE, ey + EMOJI_CELL_SIZE, 0x44FFFFFF);
                 guiGraphics.drawString(Minecraft.getInstance().font, ":" + emoji.shortcode() + ":", ex, ey + EMOJI_CELL_SIZE + 2, 0xCCCCCC, false);
             }
@@ -111,11 +111,11 @@ public class ChatScreenMixin
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir)
-{
+    {
         if (button != 0) return;
 
         if (diversifiedchatbar$isOverToggleButton((int) mouseX, (int) mouseY))
-{
+        {
             diversifiedchatbar$showPicker = !diversifiedchatbar$showPicker;
             diversifiedchatbar$pickerPage = 0;
             cir.setReturnValue(true);
@@ -123,7 +123,7 @@ public class ChatScreenMixin
         }
 
         if (diversifiedchatbar$isOverSettingsButton((int) mouseX, (int) mouseY))
-{
+        {
             Minecraft.getInstance().setScreen(new EmojiManageScreen());
             cir.setReturnValue(true);
             return;
@@ -149,7 +149,7 @@ public class ChatScreenMixin
         int endIndex = Math.min(startIndex + EMOJIS_PER_PAGE, emojis.size());
 
         for (int i = startIndex; i < endIndex; i++)
-{
+        {
             int indexInPage = i - startIndex;
             int col = indexInPage % PICKER_COLS;
             int row = indexInPage / PICKER_COLS;
@@ -157,7 +157,7 @@ public class ChatScreenMixin
             int ey = panelY + PICKER_PADDING + row * (EMOJI_CELL_SIZE + PICKER_PADDING);
 
             if (mouseX >= ex && mouseX <= ex + EMOJI_CELL_SIZE && mouseY >= ey && mouseY <= ey + EMOJI_CELL_SIZE)
-{
+            {
                 Emoji emoji = emojis.get(i);
                 String message = ":" + emoji.shortcode() + ":";
                 ChatScreen self = (ChatScreen) (Object) this;
@@ -171,7 +171,7 @@ public class ChatScreenMixin
 
     @Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
     private void onMouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY, CallbackInfoReturnable<Boolean> cir)
-{
+    {
         if (!diversifiedchatbar$showPicker) return;
 
         EmojiManager manager = EmojiManager.getInstance();
@@ -189,13 +189,13 @@ public class ChatScreenMixin
         int panelY = input.getY() - panelHeight - 4;
 
         if (mouseX >= panelX && mouseX <= panelX + panelWidth && mouseY >= panelY && mouseY <= panelY + panelHeight)
-{
+        {
             if (scrollY < 0)
-{
+            {
                 diversifiedchatbar$pickerPage = Math.min(diversifiedchatbar$pickerPage + 1, totalPages - 1);
             }
-else if (scrollY > 0)
-{
+            else if (scrollY > 0)
+            {
                 diversifiedchatbar$pickerPage = Math.max(diversifiedchatbar$pickerPage - 1, 0);
             }
             cir.setReturnValue(true);
@@ -204,7 +204,7 @@ else if (scrollY > 0)
 
     @Unique
     private void diversifiedchatbar$renderToggleButton(GuiGraphics guiGraphics)
-{
+    {
         Font font = Minecraft.getInstance().font;
         int btnX = input.getX() + input.getWidth() - BUTTON_SIZE - 24;
         int btnY = input.getY() + (input.getHeight() - BUTTON_SIZE) / 2;
@@ -216,7 +216,7 @@ else if (scrollY > 0)
 
     @Unique
     private boolean diversifiedchatbar$isOverToggleButton(int mouseX, int mouseY)
-{
+    {
         int btnX = input.getX() + input.getWidth() - BUTTON_SIZE - 24;
         int btnY = input.getY() + (input.getHeight() - BUTTON_SIZE) / 2;
         return mouseX >= btnX && mouseX <= btnX + BUTTON_SIZE && mouseY >= btnY && mouseY <= btnY + BUTTON_SIZE;
@@ -224,7 +224,7 @@ else if (scrollY > 0)
 
     @Unique
     private void diversifiedchatbar$renderSettingsButton(GuiGraphics guiGraphics)
-{
+    {
         Font font = Minecraft.getInstance().font;
         int btnX = input.getX() + input.getWidth() - BUTTON_SIZE - 2;
         int btnY = input.getY() + (input.getHeight() - BUTTON_SIZE) / 2;
@@ -235,7 +235,7 @@ else if (scrollY > 0)
 
     @Unique
     private boolean diversifiedchatbar$isOverSettingsButton(int mouseX, int mouseY)
-{
+    {
         int btnX = input.getX() + input.getWidth() - BUTTON_SIZE - 2;
         int btnY = input.getY() + (input.getHeight() - BUTTON_SIZE) / 2;
         return mouseX >= btnX && mouseX <= btnX + BUTTON_SIZE && mouseY >= btnY && mouseY <= btnY + BUTTON_SIZE;

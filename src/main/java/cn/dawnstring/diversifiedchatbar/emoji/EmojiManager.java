@@ -40,13 +40,13 @@ public class EmojiManager
     private EmojiManager() {}
 
     public static EmojiManager getInstance()
-{
+    {
         if (instance == null) instance = new EmojiManager();
         return instance;
     }
 
     public void load(DCBConfig config)
-{
+    {
         this.config = config;
         loaded = false;
         emojiMap.clear();
@@ -59,12 +59,12 @@ public class EmojiManager
     }
 
     public void reload()
-{
+    {
         if (config == null) return;
         
         Minecraft mc = Minecraft.getInstance();
         for (Emoji emoji : emojiList)
-{
+        {
             mc.getTextureManager().release(emoji.textureLocation());
         }
         animatedEmojis.clear();
@@ -72,9 +72,9 @@ public class EmojiManager
     }
 
     public boolean addEmojiFromSource(Path sourcePath, String preferredName)
-{
+    {
         try
-{
+        {
             ensureFolder();
             String fileName = preferredName != null ? preferredName :
                     java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("'emoji_'yyyyMMdd_HHmmss"));
@@ -83,23 +83,23 @@ public class EmojiManager
             boolean isGif = lowerName.endsWith(".gif");
 
             if (!isGif)
-{
+            {
                 
                 if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg"))
-{
+                {
                     fileName += ".png";
                 }
-else if (lowerName.endsWith(".png"))
-{
+                else if (lowerName.endsWith(".png"))
+                {
                     fileName += ".png";
                 }
-else
-{
+                else
+                {
                     fileName += ".png";
                 }
             }
-else
-{
+            else
+            {
                 fileName += ".gif";
             }
 
@@ -108,33 +108,33 @@ else
             Path dest = emojiFolderPath.resolve(fileName);
             int counter = 1;
             while (Files.exists(dest))
-{
+            {
                 String base = fileName.substring(0, fileName.length() - 4);
                 dest = emojiFolderPath.resolve(base + "_" + counter + ".png");
                 counter++;
                 
                 if (isGif)
-{
+                {
                     dest = emojiFolderPath.resolve(base + "_" + counter + ".gif");
                 }
             }
 
             if (sourcePath.getFileName().toString().toLowerCase().endsWith(".gif"))
-{
+            {
                 Files.copy(sourcePath, dest, StandardCopyOption.REPLACE_EXISTING);
                 return loadGifEmoji(dest.toFile(), emojiList.size());
             }
-else if (lowerName.endsWith(".png"))
-{
+            else if (lowerName.endsWith(".png"))
+            {
                 Files.copy(sourcePath, dest, StandardCopyOption.REPLACE_EXISTING);
                 return loadSingleEmoji(dest.toFile(), emojiList.size());
             }
-else
-{
+            else
+            {
                 
                 BufferedImage bi = ImageIO.read(sourcePath.toFile());
                 if (bi == null)
-{
+                {
                     DiversifiedChatBar.LOGGER.error("Failed to decode image: {}", sourcePath);
                     return false;
                 }
@@ -144,17 +144,17 @@ else
                 return loadSingleEmoji(dest.toFile(), emojiList.size());
             }
         }
-catch (IOException e)
-{
+        catch (IOException e)
+        {
             DiversifiedChatBar.LOGGER.error("Failed to add emoji: {}", e.getMessage());
             return false;
         }
     }
 
     public boolean removeEmoji(Emoji emoji)
-{
+    {
         try
-{
+        {
             Files.deleteIfExists(emoji.filePath());
             Minecraft.getInstance().getTextureManager().release(emoji.textureLocation());
             emojiMap.remove(emoji.shortcode().toLowerCase());
@@ -163,28 +163,28 @@ catch (IOException e)
             DiversifiedChatBar.LOGGER.info("Removed emoji: {}", emoji.shortcode());
             return true;
         }
-catch (IOException e)
-{
+        catch (IOException e)
+        {
             DiversifiedChatBar.LOGGER.error("Failed to remove emoji {}: {}", emoji.shortcode(), e.getMessage());
             return false;
         }
     }
 
     private void ensureFolder()
-{
+    {
         if (emojiFolderPath == null) return;
         try
-{
+        {
             Files.createDirectories(emojiFolderPath);
         }
-catch (IOException e)
-{
+        catch (IOException e)
+        {
             DiversifiedChatBar.LOGGER.error("Failed to create emoji folder: {}", e.getMessage());
         }
     }
 
     private void scanAndLoad()
-{
+    {
         if (emojiFolderPath == null || !Files.isDirectory(emojiFolderPath)) return;
         File[] files = emojiFolderPath.toFile().listFiles((dir, name) -> {
             String lower = name.toLowerCase();
@@ -193,14 +193,14 @@ catch (IOException e)
         if (files == null) return;
         int index = 0;
         for (File file : files)
-{
+        {
             boolean loaded;
             if (file.getName().toLowerCase().endsWith(".gif"))
-{
+            {
                 loaded = loadGifEmoji(file, index);
             }
-else
-{
+            else
+            {
                 loaded = loadSingleEmoji(file, index);
             }
             if (loaded) index++;
@@ -209,7 +209,7 @@ else
     }
 
     private boolean loadSingleEmoji(File file, int index)
-{
+    {
         if (config == null) return false;
         String fileName = file.getName();
         String shortcode = fileName.substring(0, fileName.length() - 4)
@@ -218,7 +218,7 @@ else
         Minecraft mc = Minecraft.getInstance();
 
         try (var inputStream = Files.newInputStream(file.toPath()))
-{
+        {
             NativeImage image = NativeImage.read(inputStream);
             NativeImage processed = compressIfNeeded(image);
             int w = processed.getWidth();
@@ -236,15 +236,15 @@ else
             DiversifiedChatBar.LOGGER.debug("Loaded emoji: {} ({}x{})", shortcode, w, h);
             return true;
         }
-catch (IOException e)
-{
+        catch (IOException e)
+        {
             DiversifiedChatBar.LOGGER.error("Failed to load emoji {}: {}", fileName, e.getMessage());
             return false;
         }
     }
 
     private boolean loadGifEmoji(File file, int index)
-{
+    {
         if (config == null) return false;
         String fileName = file.getName();
         String shortcode = fileName.substring(0, fileName.length() - 4)
@@ -252,20 +252,20 @@ catch (IOException e)
                 .replaceAll("[^a-z0-9/._-]", "_");
 
         try
-{
+        {
             ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
             try (ImageInputStream stream = ImageIO.createImageInputStream(file))
-{
+            {
                 reader.setInput(stream);
                 int count = reader.getNumImages(true);
                 if (count <= 1)
-{
+                {
                     
                     BufferedImage bi = reader.read(0);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     ImageIO.write(bi, "PNG", baos);
                     try (var in = new ByteArrayInputStream(baos.toByteArray()))
-{
+                    {
                         NativeImage image = NativeImage.read(in);
                         return loadSingleNativeImage(image, shortcode, index, file.toPath());
                     }
@@ -278,7 +278,7 @@ catch (IOException e)
                 int canvasW = reader.getWidth(0);
                 int canvasH = reader.getHeight(0);
                 for (int i = 1; i < count; i++)
-{
+                {
                     canvasW = Math.max(canvasW, reader.getWidth(i));
                     canvasH = Math.max(canvasH, reader.getHeight(i));
                 }
@@ -286,7 +286,7 @@ catch (IOException e)
                 BufferedImage canvas = new BufferedImage(canvasW, canvasH, BufferedImage.TYPE_INT_ARGB);
 
                 for (int i = 0; i < count; i++)
-{
+                {
                     int disposal = getDisposalMethod(reader, i);
                     int[] pos = getFramePosition(reader, i);
 
@@ -297,7 +297,7 @@ catch (IOException e)
                     
                     
                     if (disposal == 0)
-{
+                    {
                         Graphics2D g0 = canvas.createGraphics();
                         g0.setComposite(AlphaComposite.Clear);
                         g0.fillRect(pos[0], pos[1], fw, fh);
@@ -314,14 +314,14 @@ catch (IOException e)
                     delays[i] = getGifDelay(reader, i);
 
                     if (disposal == 2)
-{
+                    {
                         g = canvas.createGraphics();
                         g.setComposite(AlphaComposite.Clear);
                         g.fillRect(pos[0], pos[1], fw, fh);
                         g.dispose();
                     }
-else if (disposal == 3)
-{
+                    else if (disposal == 3)
+                    {
                         canvas = saved;
                     }
                 }
@@ -329,9 +329,9 @@ else if (disposal == 3)
                 
                 boolean needsResize = canvasW > MAX_SIZE || canvasH > MAX_SIZE;
                 if (needsResize)
-{
+                {
                     for (int i = 0; i < count; i++)
-{
+                    {
                         frames[i] = compressNativeImage(frames[i]);
                     }
                     canvasW = frames[0].getWidth();
@@ -359,28 +359,29 @@ else if (disposal == 3)
                 return true;
             }
         }
-catch (IOException | IllegalArgumentException e)
-{
+        catch (IOException | IllegalArgumentException e)
+        {
             DiversifiedChatBar.LOGGER.error("Failed to load GIF emoji {}: {}", fileName, e.getMessage());
             return false;
         }
     }
 
     
-    public void loadServerGif(java.util.UUID owner, String shortcode, byte[] gifData) throws IOException {
+    public void loadServerGif(java.util.UUID owner, String shortcode, byte[] gifData) throws IOException
+    {
         ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
         try (ImageInputStream stream = ImageIO.createImageInputStream(new ByteArrayInputStream(gifData)))
-{
+        {
             reader.setInput(stream);
             int count = reader.getNumImages(true);
             if (count <= 1)
-{
+            {
                     
                 BufferedImage bi = reader.read(0);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(bi, "PNG", baos);
                 try (var in = new ByteArrayInputStream(baos.toByteArray()))
-{
+                {
                     NativeImage image = NativeImage.read(in);
                     NativeImage processed = compressIfNeededStatic(image);
                     String texPath = "server_emoji/" + owner + "_" + shortcode;
@@ -401,7 +402,7 @@ catch (IOException | IllegalArgumentException e)
             int canvasW = reader.getWidth(0);
             int canvasH = reader.getHeight(0);
             for (int i = 1; i < count; i++)
-{
+            {
                 canvasW = Math.max(canvasW, reader.getWidth(i));
                 canvasH = Math.max(canvasH, reader.getHeight(i));
             }
@@ -409,7 +410,7 @@ catch (IOException | IllegalArgumentException e)
             BufferedImage canvas = new BufferedImage(canvasW, canvasH, BufferedImage.TYPE_INT_ARGB);
 
             for (int i = 0; i < count; i++)
-{
+            {
                 int disposal = getDisposalMethod(reader, i);
                 int[] pos = getFramePosition(reader, i);
 
@@ -418,7 +419,7 @@ catch (IOException | IllegalArgumentException e)
                 int fh = rawFrame.getHeight();
 
                 if (disposal == 0)
-{
+                {
                     Graphics2D g0 = canvas.createGraphics();
                     g0.setComposite(AlphaComposite.Clear);
                     g0.fillRect(pos[0], pos[1], fw, fh);
@@ -435,23 +436,23 @@ catch (IOException | IllegalArgumentException e)
                 delays[i] = getGifDelay(reader, i);
 
                 if (disposal == 2)
-{
+                {
                     g = canvas.createGraphics();
                     g.setComposite(AlphaComposite.Clear);
                     g.fillRect(pos[0], pos[1], fw, fh);
                     g.dispose();
                 }
-else if (disposal == 3)
-{
+                else if (disposal == 3)
+                {
                     canvas = saved;
                 }
             }
 
             
             if (canvasW > MAX_SIZE || canvasH > MAX_SIZE)
-{
+            {
                 for (int i = 0; i < count; i++)
-{
+                {
                     frames[i] = compressNativeImage(frames[i]);
                 }
                 canvasW = frames[0].getWidth();
@@ -472,7 +473,7 @@ else if (disposal == 3)
 
     
     public void updateAnimatedTexture(Emoji emoji)
-{
+    {
         if (!emoji.isAnimated()) return;
         AnimatedEmojiData data = animatedEmojis.get(emoji.shortcode().toLowerCase());
         if (data == null) return;
@@ -494,14 +495,14 @@ else if (disposal == 3)
     }
 
     public void clearServerEmoji()
-{
+    {
         Minecraft mc = Minecraft.getInstance();
         Iterator<Emoji> iter = emojiList.iterator();
         while (iter.hasNext())
-{
+        {
             Emoji e = iter.next();
             if (e.source() == Emoji.Source.SERVER)
-{
+            {
                 mc.getTextureManager().release(e.textureLocation());
                 emojiMap.remove(e.shortcode().toLowerCase());
                 animatedEmojis.remove(e.shortcode().toLowerCase());
@@ -511,7 +512,7 @@ else if (disposal == 3)
     }
 
     public void addServerEmoji(Emoji emoji)
-{
+    {
         emojiMap.put(emoji.shortcode().toLowerCase(), emoji);
         emojiList.add(emoji);
     }
@@ -519,7 +520,7 @@ else if (disposal == 3)
     
 
     private NativeImage compressIfNeeded(NativeImage image)
-{
+    {
         int w = image.getWidth();
         int h = image.getHeight();
         if (w <= MAX_SIZE && h <= MAX_SIZE) return image;
@@ -530,7 +531,7 @@ else if (disposal == 3)
     }
 
     public static NativeImage compressIfNeededStatic(NativeImage image)
-{
+    {
         int w = image.getWidth();
         int h = image.getHeight();
         if (w <= MAX_SIZE && h <= MAX_SIZE) return image;
@@ -541,14 +542,14 @@ else if (disposal == 3)
     }
 
     private static NativeImage resizeNativeImage(NativeImage image, int w, int h)
-{
+    {
         float scale;
         if (w > h)
-{
+        {
             scale = (float) MAX_SIZE / w;
         }
-else
-{
+        else
+        {
             scale = (float) MAX_SIZE / h;
         }
         int newW = Math.max(1, Math.round(w * scale));
@@ -557,9 +558,9 @@ else
         DiversifiedChatBar.LOGGER.info("Compressing emoji from {}x{} to {}x{}", w, h, newW, newH);
         NativeImage resized = new NativeImage(newW, newH, false);
         for (int y = 0; y < newH; y++)
-{
+        {
             for (int x = 0; x < newW; x++)
-{
+            {
                 int sx = Math.min(x * w / newW, w - 1);
                 int sy = Math.min(y * h / newH, h - 1);
                 resized.setPixelRGBA(x, y, image.getPixelRGBA(sx, sy));
@@ -569,19 +570,19 @@ else
     }
 
     private NativeImage compressNativeImage(NativeImage image)
-{
+    {
         return resizeNativeImage(image, image.getWidth(), image.getHeight());
     }
 
     private static NativeImage copyNativeImage(NativeImage src)
-{
+    {
         int w = src.getWidth();
         int h = src.getHeight();
         NativeImage copy = new NativeImage(w, h, true);
         for (int y = 0; y < h; y++)
-{
+        {
             for (int x = 0; x < w; x++)
-{
+            {
                 copy.setPixelRGBA(x, y, src.getPixelRGBA(x, y));
             }
         }
@@ -589,15 +590,15 @@ else
     }
 
     private static NativeImage padToSize(NativeImage image, int targetW, int targetH)
-{
+    {
         int w = image.getWidth();
         int h = image.getHeight();
         if (w == targetW && h == targetH) return image;
         NativeImage padded = new NativeImage(targetW, targetH, true);
         for (int y = 0; y < h && y < targetH; y++)
-{
+        {
             for (int x = 0; x < w && x < targetW; x++)
-{
+            {
                 padded.setPixelRGBA(x, y, image.getPixelRGBA(x, y));
             }
         }
@@ -606,9 +607,10 @@ else
     }
 
     
-    private static NativeImage biToNativeImage(BufferedImage bi) throws IOException {
+    private static NativeImage biToNativeImage(BufferedImage bi) throws IOException
+    {
         if (bi.getType() != BufferedImage.TYPE_INT_ARGB)
-{
+        {
             BufferedImage argb = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_ARGB);
             argb.getGraphics().drawImage(bi, 0, 0, null);
             bi = argb;
@@ -619,42 +621,47 @@ else
     }
 
     
-    private static int getGifDelay(ImageReader reader, int index) throws IOException {
+    private static int getGifDelay(ImageReader reader, int index) throws IOException
+    {
         try
-{
+        {
             IIOMetadata metadata = reader.getImageMetadata(index);
             String[] formats = metadata.getMetadataFormatNames();
             if (formats == null) return 100;
             for (String fmt : formats)
-{
+            {
                 IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree(fmt);
                 int delay = findDelayInNode(root);
                 if (delay > 0) return Math.max(20, delay); 
             }
         }
-        } catch (Exception ignored) {}
+        catch (Exception ignored)
+        {
+        }
         return 100;
     }
 
     private static int findDelayInNode(IIOMetadataNode node)
-{
+    {
         if ("GraphicControlExtension".equals(node.getNodeName()))
-{
+        {
             String delay = node.getAttribute("delayTime");
             if (delay != null && !delay.isEmpty())
-{
+            {
                 try
-{
+                {
                     return Integer.parseInt(delay) * 10; 
                 }
-                } catch (NumberFormatException ignored) {}
+                catch (NumberFormatException ignored)
+                {
+                }
             }
         }
         for (int i = 0; i < node.getLength(); i++)
-{
+        {
             var child = node.item(i);
             if (child instanceof IIOMetadataNode metaChild)
-{
+            {
                 int delay = findDelayInNode(metaChild);
                 if (delay > 0) return delay;
             }
@@ -663,21 +670,22 @@ else
     }
 
     
-    private static int[] getFramePosition(ImageReader reader, int index) throws IOException {
+    private static int[] getFramePosition(ImageReader reader, int index) throws IOException
+    {
         try
-{
+        {
             IIOMetadata metadata = reader.getImageMetadata(index);
             String[] formats = metadata.getMetadataFormatNames();
             if (formats == null) return new int[]{0, 0};
             for (String fmt : formats)
-{
+            {
                 IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree(fmt);
                 for (int i = 0; i < root.getLength(); i++)
-{
+                {
                     var child = root.item(i);
                     if (child instanceof IIOMetadataNode metaChild
                             && "ImageDescriptor".equals(metaChild.getNodeName()))
-{
+                            {
                         int x = parseInt(metaChild.getAttribute("imageLeftPosition"), 0);
                         int y = parseInt(metaChild.getAttribute("imageTopPosition"), 0);
                         return new int[]{x, y};
@@ -685,43 +693,48 @@ else
                 }
             }
         }
-        } catch (Exception ignored) {}
+        catch (Exception ignored)
+        {
+        }
         return new int[]{0, 0};
     }
 
-    
-    private static int getDisposalMethod(ImageReader reader, int index) throws IOException {
+
+    private static int getDisposalMethod(ImageReader reader, int index) throws IOException
+    {
         try
-{
+        {
             IIOMetadata metadata = reader.getImageMetadata(index);
             String[] formats = metadata.getMetadataFormatNames();
             if (formats == null) return 0;
             for (String fmt : formats)
-{
+            {
                 IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree(fmt);
                 for (int i = 0; i < root.getLength(); i++)
-{
+                {
                     var child = root.item(i);
                     if (child instanceof IIOMetadataNode metaChild
                             && "GraphicControlExtension".equals(metaChild.getNodeName()))
-{
+                            {
                         return parseInt(metaChild.getAttribute("disposalMethod"), 0);
                     }
                 }
             }
         }
-        } catch (Exception ignored) {}
+        catch (Exception ignored)
+        {
+        }
         return 0;
     }
 
     private static int parseInt(String value, int defaultVal)
-{
+    {
         if (value == null || value.isEmpty()) return defaultVal;
         try { return Integer.parseInt(value); } catch (NumberFormatException e) { return defaultVal; }
     }
 
     private static BufferedImage copyBufferedImage(BufferedImage src)
-{
+    {
         BufferedImage copy = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = copy.createGraphics();
         g.drawImage(src, 0, 0, null);
@@ -730,7 +743,7 @@ else
     }
 
     private boolean loadSingleNativeImage(NativeImage image, String shortcode, int index, Path filePath)
-{
+    {
         if (config == null) return false;
         Minecraft mc = Minecraft.getInstance();
         NativeImage processed = compressIfNeeded(image);
@@ -759,7 +772,7 @@ else
     
 
     private static class AnimatedEmojiData
-{
+    {
         final NativeImage[] frames;
         final int[] delays; 
         final ResourceLocation textureLocation;
@@ -768,7 +781,7 @@ else
         long nextFrameTime;
 
         AnimatedEmojiData(NativeImage[] frames, int[] delays, ResourceLocation texLoc, DynamicTexture tex, int w, int h)
-{
+        {
             this.frames = frames;
             this.delays = delays;
             this.textureLocation = texLoc;

@@ -40,7 +40,7 @@ public class ChatComponentMixin
 
     @Inject(method = "render", at = @At("HEAD"))
     private void onRenderHead(CallbackInfo ci)
-{
+    {
         diversifiedchatbar$extraHeightBelow = 0;
         diversifiedchatbar$hasPendingBg = false;
     }
@@ -50,12 +50,12 @@ public class ChatComponentMixin
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V")
     )
     private void onFill(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int color)
-{
+    {
         int height = y2 - y1;
         Font f = Minecraft.getInstance().font;
         int expectedLineH = (f != null ? f.lineHeight : 9) + 2;
         if (Math.abs(height - expectedLineH) <= 2)
-{
+        {
             diversifiedchatbar$pendingBgX1 = x1;
             diversifiedchatbar$pendingBgY1 = y1;
             diversifiedchatbar$pendingBgX2 = x2;
@@ -72,7 +72,7 @@ public class ChatComponentMixin
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;III)I")
     )
     private int onDrawString(GuiGraphics guiGraphics, Font font, FormattedCharSequence seq, int x, int y, int color)
-{
+    {
         int adjustedY = y - diversifiedchatbar$extraHeightBelow;
 
         int alphaInt = (color >>> 24) & 0xFF;
@@ -81,9 +81,9 @@ public class ChatComponentMixin
         String text = diversifiedchatbar$extractString(seq);
         List<EmojiParser.EmojiMatch> matches = EmojiParser.parseEmojis(text);
         if (matches.isEmpty())
-{
+        {
             if (diversifiedchatbar$hasPendingBg)
-{
+            {
                 int adjY1 = diversifiedchatbar$pendingBgY1 - diversifiedchatbar$extraHeightBelow;
                 int adjY2 = diversifiedchatbar$pendingBgY2 - diversifiedchatbar$extraHeightBelow;
                 guiGraphics.fill(diversifiedchatbar$pendingBgX1, adjY1, diversifiedchatbar$pendingBgX2, adjY2, diversifiedchatbar$pendingBgColor);
@@ -99,21 +99,21 @@ public class ChatComponentMixin
 
         int maxSize;
         if (isChatScreen)
-{
+        {
             double fraction = DCBConfig.getEffectiveScreenFraction();
             maxSize = (int) Math.round(Math.min(guiHeight * fraction, 256) * chatScale);
         }
-else
-{
+        else
+        {
             int chatLines = DCBConfig.getEffectiveChatLines();
             maxSize = (int) Math.round(chatLines * lineHeight * chatScale);
         }
 
         int actualRenderH = 0;
         for (EmojiParser.EmojiMatch match : matches)
-{
+        {
             if (match.emoji() != null)
-{
+            {
                 int h = Math.min(match.emoji().height(), maxSize);
                 if (h > actualRenderH) actualRenderH = h;
             }
@@ -126,7 +126,7 @@ else
 
         
         if (diversifiedchatbar$hasPendingBg)
-{
+        {
             int bgTop = adjustedY - actualRenderH;
             int bgBottom = diversifiedchatbar$pendingBgY2 - prevExtraHeightBelow;
             guiGraphics.fill(diversifiedchatbar$pendingBgX1, bgTop, diversifiedchatbar$pendingBgX2, bgBottom, diversifiedchatbar$pendingBgColor);
@@ -137,17 +137,17 @@ else
 
         boolean pureEmoji = diversifiedchatbar$isPureEmojiLine(text, matches);
         if (!pureEmoji)
-{
+        {
             FormattedCharSequence cleanSeq = diversifiedchatbar$skipShortcodes(seq, matches, text);
             guiGraphics.drawString(font, cleanSeq, x, adjustedY, color);
         }
 
         
         for (EmojiParser.EmojiMatch match : matches)
-{
+        {
             Emoji emoji = match.emoji();
             if (emoji != null)
-{
+            {
                 int offsetX = font.width(text.substring(0, match.startIndex()));
                 int ex = x + offsetX;
                 int renderH = Math.min(emoji.height(), maxSize);
@@ -173,11 +173,11 @@ else
 
     @Unique
     private static boolean diversifiedchatbar$isPureEmojiLine(String text, List<EmojiParser.EmojiMatch> matches)
-{
+    {
         StringBuilder clean = new StringBuilder();
         int lastEnd = 0;
         for (EmojiParser.EmojiMatch match : matches)
-{
+        {
             clean.append(text, lastEnd, match.startIndex());
             lastEnd = match.endIndex();
         }
@@ -187,7 +187,7 @@ else
 
     @Unique
     private static String diversifiedchatbar$extractString(FormattedCharSequence seq)
-{
+    {
         StringBuilder sb = new StringBuilder();
         seq.accept((index, style, codePoint) -> {
             sb.appendCodePoint(codePoint);
@@ -198,12 +198,12 @@ else
 
     @Unique
     private static FormattedCharSequence diversifiedchatbar$skipShortcodes(FormattedCharSequence original, List<EmojiParser.EmojiMatch> matches, String text)
-{
+    {
         boolean[] skip = new boolean[text.length()];
         for (EmojiParser.EmojiMatch m : matches)
-{
+        {
             for (int i = m.startIndex(); i < m.endIndex() && i < text.length(); i++)
-{
+            {
                 skip[i] = true;
             }
         }
@@ -213,7 +213,7 @@ else
                 int curPos = pos[0];
                 pos[0] = curPos + Character.charCount(codePoint);
                 if (curPos < skip.length && skip[curPos])
-{
+                {
                     return true;
                 }
                 return sink.accept(idx, style, codePoint);

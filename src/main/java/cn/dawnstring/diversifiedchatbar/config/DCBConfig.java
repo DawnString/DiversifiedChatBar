@@ -13,17 +13,17 @@ public class DCBConfig
     public static volatile double runtimeChatScaleOverride = 0.0;
 
     public static int getEffectiveChatLines()
-{
+    {
         return runtimeChatLinesOverride > 0 ? runtimeChatLinesOverride : EMOJI_CHAT_LINES.get();
     }
 
     public static double getEffectiveScreenFraction()
-{
+    {
         return runtimeScreenFractionOverride > 0.0 ? runtimeScreenFractionOverride : EMOJI_SCREEN_FRACTION.get();
     }
 
     public static double getEffectiveChatScale()
-{
+    {
         return runtimeChatScaleOverride > 0.0 ? runtimeChatScaleOverride : EMOJI_CHAT_SCALE.get();
     }
 
@@ -44,7 +44,7 @@ public class DCBConfig
     public final double emojiChatScale;
 
     static
-{
+    {
         BUILDER.push("emoji");
 
         EMOJI_FOLDER = BUILDER
@@ -80,7 +80,7 @@ public class DCBConfig
     }
 
     public DCBConfig(ModConfigSpec spec)
-{
+    {
         emojiFolder = EMOJI_FOLDER.get();
         emojiScale = EMOJI_SCALE.get();
         maxEmojiWidth = MAX_EMOJI_WIDTH.get();

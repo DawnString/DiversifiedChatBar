@@ -39,13 +39,13 @@ public class EmojiManageScreen extends Screen
     private static final int SIZE_BTN_W = 16;
 
     public EmojiManageScreen()
-{
+    {
         super(Component.translatable("diversifiedchatbar.screen.emojiManager.title"));
     }
 
     @Override
     protected void init()
-{
+    {
         super.init();
         emojis = EmojiManager.getInstance().getAllEmojis();
 
@@ -65,14 +65,14 @@ public class EmojiManageScreen extends Screen
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
-{
+    {
         
         if (emojis != null)
-{
+        {
             for (Emoji e : emojis)
-{
+            {
                 if (e.isAnimated())
-{
+                {
                     EmojiManager.getInstance().updateAnimatedTexture(e);
                 }
             }
@@ -86,7 +86,7 @@ public class EmojiManageScreen extends Screen
         guiGraphics.drawString(font, Component.translatable("diversifiedchatbar.screen.emojiManager.folder", folder != null ? folder.toString() : "N/A"), 10, 24, 0x888888, false);
 
         if (emojis == null || emojis.isEmpty())
-{
+        {
             guiGraphics.drawString(font, Component.translatable("diversifiedchatbar.screen.emojiManager.empty"), 10, 60, 0x888888, false);
             guiGraphics.drawString(font, Component.translatable("diversifiedchatbar.screen.emojiManager.dragHint"), 10, 72, 0x666666, false);
             return;
@@ -100,7 +100,7 @@ public class EmojiManageScreen extends Screen
 
         
         for (int i = 0; i < emojis.size(); i++)
-{
+        {
             Emoji emoji = emojis.get(i);
             int col = i % GRID_COLS;
             int row = i / GRID_COLS;
@@ -112,7 +112,7 @@ public class EmojiManageScreen extends Screen
             guiGraphics.fill(x, y, x + CELL_SIZE, y + CELL_SIZE, 0x33FFFFFF);
 
             if (mouseX >= x && mouseX <= x + CELL_SIZE && mouseY >= y && mouseY <= y + CELL_SIZE)
-{
+            {
                 guiGraphics.fill(x, y, x + CELL_SIZE, y + CELL_SIZE, 0x44FFFFFF);
             }
         }
@@ -122,7 +122,7 @@ public class EmojiManageScreen extends Screen
 
         
         for (int i = 0; i < emojis.size(); i++)
-{
+        {
             Emoji emoji = emojis.get(i);
             int col = i % GRID_COLS;
             int row = i / GRID_COLS;
@@ -153,7 +153,7 @@ public class EmojiManageScreen extends Screen
             guiGraphics.drawString(font, ":" + emoji.shortcode() + ":", x + 2, y + CELL_SIZE - 12, 0xCCCCCC, false);
 
             if (mouseX >= x && mouseX <= x + CELL_SIZE && mouseY >= y && mouseY <= y + CELL_SIZE)
-{
+            {
                 guiGraphics.drawString(font, Component.translatable("diversifiedchatbar.screen.emojiManager.delete"), x + CELL_SIZE - 20, y + 2, 0xFF4444, false);
                 deleteHoverEmoji = emoji;
             }
@@ -168,7 +168,7 @@ public class EmojiManageScreen extends Screen
     }
 
     private void diversifiedchatbar$renderSizeControl(GuiGraphics guiGraphics)
-{
+    {
         double scale = DCBConfig.getEffectiveChatScale();
         String label = Component.translatable("diversifiedchatbar.screen.emojiManager.size", String.format("%.1f", scale)).getString();
         int lblW = font.width(label);
@@ -192,16 +192,16 @@ public class EmojiManageScreen extends Screen
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
-{
+    {
         if (button == 0 && deleteHoverEmoji != null)
-{
+        {
             EmojiManager.getInstance().removeEmoji(deleteHoverEmoji);
             emojis = EmojiManager.getInstance().getAllEmojis();
             return true;
         }
 
         if (button == 0)
-{
+        {
             int mx = (int) mouseX;
             int my = (int) mouseY;
 
@@ -215,7 +215,7 @@ public class EmojiManageScreen extends Screen
             
             int decX = lblX - 4 - SIZE_BTN_W;
             if (mx >= decX && mx <= decX + SIZE_BTN_W && my >= btnY && my <= btnY + btnH)
-{
+            {
                 double newVal = Math.max(0.25, scale - 0.25);
                 DCBConfig.runtimeChatScaleOverride = (newVal < 0.5 && Math.abs(newVal - 0.5) > 0.01) ? 0.0 : newVal;
                 if (DCBConfig.runtimeChatScaleOverride < 0.01) DCBConfig.runtimeChatScaleOverride = 0.0;
@@ -225,7 +225,7 @@ public class EmojiManageScreen extends Screen
             
             int incX = lblX + lblW + 4;
             if (mx >= incX && mx <= incX + SIZE_BTN_W && my >= btnY && my <= btnY + btnH)
-{
+            {
                 double newVal = Math.min(3.0, scale + 0.25);
                 DCBConfig.runtimeChatScaleOverride = newVal;
                 return true;
@@ -237,7 +237,7 @@ public class EmojiManageScreen extends Screen
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY)
-{
+    {
         if (emojis == null) return false;
         int totalRows = (int) Math.ceil((double) emojis.size() / GRID_COLS);
         int maxScroll = Math.max(0, totalRows * (CELL_SIZE + PADDING) - (height - 100));
@@ -247,34 +247,34 @@ public class EmojiManageScreen extends Screen
 
     @Override
     public void onFilesDrop(List<Path> paths)
-{
+    {
         Minecraft mc = Minecraft.getInstance();
         if (mc.getConnection() != null && !mc.isLocalServer())
-{
+        {
             
             int idx = 0;
             for (Path path : paths)
-{
+            {
                 String name = path.getFileName().toString().toLowerCase();
                 if (!(name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".gif"))) continue;
                 try
-{
+                {
                     String shortcode = java.time.LocalDateTime.now()
                             .format(java.time.format.DateTimeFormatter.ofPattern("'emoji_'yyyyMMdd_HHmmss"));
                     if (idx > 0) shortcode += "_" + idx;
 
                     byte[] imageData;
                     if (name.endsWith(".gif"))
-{
+                    {
                         
                         imageData = Files.readAllBytes(path);
                     }
-else if (name.endsWith(".png"))
-{
+                    else if (name.endsWith(".png"))
+                    {
                         imageData = Files.readAllBytes(path);
                     }
-else
-{
+                    else
+                    {
                         
                         BufferedImage bi = ImageIO.read(path.toFile());
                         if (bi == null) continue;
@@ -289,20 +289,20 @@ else
                     DiversifiedChatBar.LOGGER.info("Uploaded emoji {} to server", shortcode);
                     idx++;
                 }
-catch (IOException e)
-{
+                catch (IOException e)
+                {
                     DiversifiedChatBar.LOGGER.error("Failed to upload emoji: {}", e.getMessage());
                 }
             }
         }
-else
-{
+        else
+        {
             
             for (Path path : paths)
-{
+            {
                 String name = path.getFileName().toString().toLowerCase();
                 if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".gif"))
-{
+                {
                     EmojiManager.getInstance().addEmojiFromSource(path, null);
                 }
             }

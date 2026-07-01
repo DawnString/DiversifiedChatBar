@@ -14,7 +14,7 @@ public class ServerPayloadHandler
 {
 
     public static void handleUpload(EmojiPayloads.EmojiUploadPayload payload, IPayloadContext context)
-{
+    {
         context.enqueueWork(() -> {
             ServerPlayer player = (ServerPlayer) context.player();
             MinecraftServer server = player.getServer();
@@ -24,7 +24,7 @@ public class ServerPayloadHandler
                     player.getUUID(), payload.shortcode(), payload.imageData()
             );
             if (ok)
-{
+            {
                 DiversifiedChatBar.LOGGER.info("Player {} uploaded emoji: {}", player.getName().getString(), payload.shortcode());
                 broadcastSync(server);
             }
@@ -32,7 +32,7 @@ public class ServerPayloadHandler
     }
 
     public static void handleDelete(EmojiPayloads.EmojiDeletePayload payload, IPayloadContext context)
-{
+    {
         context.enqueueWork(() -> {
             ServerPlayer player = (ServerPlayer) context.player();
             MinecraftServer server = player.getServer();
@@ -40,7 +40,7 @@ public class ServerPayloadHandler
 
             boolean ok = ServerEmojiManager.getInstance().removeEmoji(payload.shortcode());
             if (ok)
-{
+            {
                 DiversifiedChatBar.LOGGER.info("Player {} deleted emoji: {}", player.getName().getString(), payload.shortcode());
                 broadcastSync(server);
             }
@@ -48,7 +48,7 @@ public class ServerPayloadHandler
     }
 
     public static void broadcastSync(MinecraftServer server)
-{
+    {
         List<EmojiPayloads.EmojiEntry> entries = ServerEmojiManager.getInstance().getAllEmoji().stream()
                 .map(e -> new EmojiPayloads.EmojiEntry(e.owner(), e.shortcode(), e.pngData()))
                 .collect(Collectors.toList());

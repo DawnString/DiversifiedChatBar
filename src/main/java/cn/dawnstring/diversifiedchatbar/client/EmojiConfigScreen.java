@@ -81,7 +81,7 @@ public class EmojiConfigScreen extends Screen
     }
 
     private int drawSettingDecimal(GuiGraphics gui, String labelKey, double value, double min, double max, double step, int y)
-{
+    {
         String label = Component.translatable(labelKey).getString() + ": ";
         gui.drawString(font, label, 20, y + 2, 0xCCCCCC, false);
         int lw = font.width(label);
@@ -106,28 +106,31 @@ public class EmojiConfigScreen extends Screen
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button)
-{
+    {
         if (button == 0)
-{
+        {
             int mx = (int) mouseX;
             int my = (int) mouseY;
 
             int y = 40;
-            if (clickSetting(mx, my, y, 2, 12, 1, v -> curLines = v)) {
+            if (clickSetting(mx, my, y, 2, 12, 1, v -> curLines = v))
+            {
                 applyOverrides();
                 return true;
             }
             y += 24;
             if (clickSettingDecimal(mx, my, y,
                     "diversifiedchatbar.screen.config.fraction", curFraction,
-                    0.10, 0.50, 0.05, v -> curFraction = v)) {
+                    0.10, 0.50, 0.05, v -> curFraction = v))
+                    {
                 applyOverrides();
                 return true;
             }
             y += 24;
             if (clickSettingDecimal(mx, my, y,
                     "diversifiedchatbar.screen.config.scale", curScale,
-                    0.25, 3.0, 0.25, v -> curScale = v)) {
+                    0.25, 3.0, 0.25, v -> curScale = v))
+                    {
                 applyOverrides();
                 return true;
             }
@@ -136,18 +139,18 @@ public class EmojiConfigScreen extends Screen
     }
 
     private boolean clickSetting(int mx, int my, int y, int min, int max, int step, java.util.function.IntConsumer setter)
-{
+    {
         int x = 20 + font.width(Component.translatable("diversifiedchatbar.screen.config.lines").getString() + ": ");
         
         if (mx >= x && mx <= x + BTN_W && my >= y && my <= y + BTN_H)
-{
+        {
             setter.accept(Math.max(min, curLines - step));
             return true;
         }
         x += BTN_W + 2 + font.width(String.valueOf(curLines)) + 2;
         
         if (mx >= x && mx <= x + BTN_W && my >= y && my <= y + BTN_H)
-{
+        {
             setter.accept(Math.min(max, curLines + step));
             return true;
         }
@@ -155,13 +158,13 @@ public class EmojiConfigScreen extends Screen
     }
 
     private boolean clickSettingDecimal(int mx, int my, int y, String labelKey, double curValue, double min, double max, double step, java.util.function.DoubleConsumer setter)
-{
+    {
         String label = Component.translatable(labelKey).getString() + ": ";
         int x = 20 + font.width(label);
 
         
         if (mx >= x && mx <= x + BTN_W && my >= y && my <= y + BTN_H)
-{
+        {
             double newVal = Math.max(min, curValue - step);
             newVal = Math.round(newVal / step) * step;
             newVal = Math.min(max, newVal);
@@ -171,7 +174,7 @@ public class EmojiConfigScreen extends Screen
         x += BTN_W + 2 + font.width(String.format("%.2f", curValue)) + 2;
         
         if (mx >= x && mx <= x + BTN_W && my >= y && my <= y + BTN_H)
-{
+        {
             double newVal = Math.min(max, curValue + step);
             newVal = Math.round(newVal / step) * step;
             newVal = Math.max(min, newVal);
@@ -182,20 +185,20 @@ public class EmojiConfigScreen extends Screen
     }
 
     private void applyOverrides()
-{
+    {
         DCBConfig.runtimeChatLinesOverride = curLines;
         DCBConfig.runtimeScreenFractionOverride = curFraction;
         DCBConfig.runtimeChatScaleOverride = curScale;
     }
 
     private void saveToConfigFile()
-{
+    {
         DiversifiedChatBar.saveRuntimeConfig(curLines, curFraction, curScale);
     }
 
     @Override
     public void onClose()
-{
+    {
         applyOverrides();
         saveToConfigFile();
         DiversifiedChatBar.LOGGER.info("Emoji config saved: lines={}, fraction={}, scale={}", curLines, curFraction, curScale);
