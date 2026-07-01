@@ -1,0 +1,24 @@
+{
+  "diversifiedchatbar.configuration.title": "多样化聊天栏配置",
+  "diversifiedchatbar.configuration.emoji": "表情设置",
+  "diversifiedchatbar.configuration.emoji.folder": "表情文件夹",
+  "diversifiedchatbar.configuration.emoji.scale": "表情缩放",
+  "diversifiedchatbar.configuration.emoji.maxWidth": "表情最大宽度",
+  "diversifiedchatbar.configuration.emoji.maxHeight": "表情最大高度",
+
+  "diversifiedchatbar.screen.emojiManager.title": "表情管理器",
+  "diversifiedchatbar.screen.emojiManager.dragHint": "将PNG/JPG图片拖入此窗口以添加表情",
+  "diversifiedchatbar.screen.emojiManager.empty": "暂无表情。拖入PNG/JPG图片以添加。",
+  "diversifiedchatbar.screen.emojiManager.folder": "文件夹: %s",
+  "diversifiedchatbar.screen.emojiManager.refresh": "刷新",
+  "diversifiedchatbar.screen.emojiManager.back": "返回",
+  "diversifiedchatbar.screen.emojiManager.delete": "[X]",
+  "diversifiedchatbar.screen.emojiManager.size": "大小: %s",
+  "diversifiedchatbar.screen.emojiManager.config": "配置",
+
+  "diversifiedchatbar.screen.config.title": "表情显示配置",
+  "diversifiedchatbar.screen.config.lines": "聊天行数",
+  "diversifiedchatbar.screen.config.fraction": "屏幕比例",
+  "diversifiedchatbar.screen.config.scale": "缩放",
+  "diversifiedchatbar.screen.config.done": "完成"
+}

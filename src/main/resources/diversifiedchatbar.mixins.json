@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "cn.dawnstring.diversifiedchatbar.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ChatComponentAccessor",
+    "ChatComponentMixin",
+    "ChatScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

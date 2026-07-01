@@ -1,0 +1,24 @@
+{
+  "diversifiedchatbar.configuration.title": "DiversifiedChatBar Configs",
+  "diversifiedchatbar.configuration.emoji": "Emoji Settings",
+  "diversifiedchatbar.configuration.emoji.folder": "Emoji Folder",
+  "diversifiedchatbar.configuration.emoji.scale": "Emoji Scale",
+  "diversifiedchatbar.configuration.emoji.maxWidth": "Max Emoji Width",
+  "diversifiedchatbar.configuration.emoji.maxHeight": "Max Emoji Height",
+
+  "diversifiedchatbar.screen.emojiManager.title": "Emoji Manager",
+  "diversifiedchatbar.screen.emojiManager.dragHint": "Drag and drop PNG/JPG files here to add emoji",
+  "diversifiedchatbar.screen.emojiManager.empty": "No emoji found. Drop PNG/JPG files to add them.",
+  "diversifiedchatbar.screen.emojiManager.folder": "Folder: %s",
+  "diversifiedchatbar.screen.emojiManager.refresh": "Refresh",
+  "diversifiedchatbar.screen.emojiManager.back": "Back",
+  "diversifiedchatbar.screen.emojiManager.delete": "[X]",
+  "diversifiedchatbar.screen.emojiManager.size": "Size: %s",
+  "diversifiedchatbar.screen.emojiManager.config": "Config",
+
+  "diversifiedchatbar.screen.config.title": "Emoji Display Config",
+  "diversifiedchatbar.screen.config.lines": "Chat Lines",
+  "diversifiedchatbar.screen.config.fraction": "Screen Fraction",
+  "diversifiedchatbar.screen.config.scale": "Scale",
+  "diversifiedchatbar.screen.config.done": "Done"
+}
