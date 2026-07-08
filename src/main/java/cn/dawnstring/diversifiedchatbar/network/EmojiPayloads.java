@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class EmojiPayloads
             {
                 list.add(new EmojiEntry(buf.readUUID(), buf.readUtf(), buf.readByteArray()));
             }
-            return list;
+            return Collections.unmodifiableList(list);
         }
 
         private void write(FriendlyByteBuf buf)

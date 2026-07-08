@@ -2,9 +2,9 @@ package cn.dawnstring.diversifiedchatbar;
 
 import cn.dawnstring.diversifiedchatbar.config.DCBConfig;
 import cn.dawnstring.diversifiedchatbar.emoji.EmojiManager;
+import cn.dawnstring.diversifiedchatbar.network.ClientPayloadHandler;
 import cn.dawnstring.diversifiedchatbar.network.EmojiPayloads;
 import cn.dawnstring.diversifiedchatbar.network.ServerPayloadHandler;
-import cn.dawnstring.diversifiedchatbar.network.SyncHandlerBridge;
 import cn.dawnstring.diversifiedchatbar.server.ServerEmojiManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -131,11 +131,16 @@ public class DiversifiedChatBar
         public static void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event)
         {
             PayloadRegistrar registrar = event.registrar(DiversifiedChatBar.MODID);
-            registrar.playToClient(
-                    EmojiPayloads.EmojiSyncPayload.TYPE,
-                    EmojiPayloads.EmojiSyncPayload.STREAM_CODEC,
-                    SyncHandlerBridge::handleSync
-            );
+
+            if (FMLEnvironment.dist == Dist.CLIENT)
+            {
+                registrar.playToClient(
+                        EmojiPayloads.EmojiSyncPayload.TYPE,
+                        EmojiPayloads.EmojiSyncPayload.STREAM_CODEC,
+                        ClientPayloadHandler::handleSync
+                );
+            }
+
             registrar.playToServer(
                     EmojiPayloads.EmojiUploadPayload.TYPE,
                     EmojiPayloads.EmojiUploadPayload.STREAM_CODEC,

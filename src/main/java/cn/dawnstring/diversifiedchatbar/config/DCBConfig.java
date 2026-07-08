@@ -7,7 +7,7 @@ public class DCBConfig
     public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
 
-    
+
     public static volatile int runtimeChatLinesOverride = 0;
     public static volatile double runtimeScreenFractionOverride = 0.0;
     public static volatile double runtimeChatScaleOverride = 0.0;
@@ -29,16 +29,12 @@ public class DCBConfig
 
     public static final ModConfigSpec.ConfigValue<String> EMOJI_FOLDER;
     public static final ModConfigSpec.DoubleValue EMOJI_SCALE;
-    public static final ModConfigSpec.IntValue MAX_EMOJI_WIDTH;
-    public static final ModConfigSpec.IntValue MAX_EMOJI_HEIGHT;
     public static final ModConfigSpec.IntValue EMOJI_CHAT_LINES;
     public static final ModConfigSpec.DoubleValue EMOJI_SCREEN_FRACTION;
     public static final ModConfigSpec.DoubleValue EMOJI_CHAT_SCALE;
 
     public final String emojiFolder;
     public final double emojiScale;
-    public final int maxEmojiWidth;
-    public final int maxEmojiHeight;
     public final int emojiChatLines;
     public final double emojiScreenFraction;
     public final double emojiChatScale;
@@ -54,14 +50,6 @@ public class DCBConfig
         EMOJI_SCALE = BUILDER
                 .comment("Scale factor for emoji rendering (0.25 - 4.0)")
                 .defineInRange("scale", 1.0, 0.25, 4.0);
-
-        MAX_EMOJI_WIDTH = BUILDER
-                .comment("Maximum emoji width in pixels (8 - 256)")
-                .defineInRange("maxWidth", 64, 8, 256);
-
-        MAX_EMOJI_HEIGHT = BUILDER
-                .comment("Maximum emoji height in pixels (8 - 256)")
-                .defineInRange("maxHeight", 64, 8, 256);
 
         EMOJI_CHAT_LINES = BUILDER
                 .comment("Number of chat lines reserved for emoji in HUD (2-12)")
@@ -83,8 +71,6 @@ public class DCBConfig
     {
         emojiFolder = EMOJI_FOLDER.get();
         emojiScale = EMOJI_SCALE.get();
-        maxEmojiWidth = MAX_EMOJI_WIDTH.get();
-        maxEmojiHeight = MAX_EMOJI_HEIGHT.get();
         emojiChatLines = EMOJI_CHAT_LINES.get();
         emojiScreenFraction = EMOJI_SCREEN_FRACTION.get();
         emojiChatScale = EMOJI_CHAT_SCALE.get();

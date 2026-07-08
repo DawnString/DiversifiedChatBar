@@ -8,7 +8,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ServerPayloadHandler
 {
@@ -51,7 +50,7 @@ public class ServerPayloadHandler
     {
         List<EmojiPayloads.EmojiEntry> entries = ServerEmojiManager.getInstance().getAllEmoji().stream()
                 .map(e -> new EmojiPayloads.EmojiEntry(e.owner(), e.shortcode(), e.pngData()))
-                .collect(Collectors.toList());
+                .toList();
 
         EmojiPayloads.EmojiSyncPayload sync = new EmojiPayloads.EmojiSyncPayload(entries);
         PacketDistributor.sendToAllPlayers(sync);

@@ -51,20 +51,12 @@ public class ChatComponentMixin
     )
     private void onFill(GuiGraphics guiGraphics, int x1, int y1, int x2, int y2, int color)
     {
-        int height = y2 - y1;
-        Font f = Minecraft.getInstance().font;
-        int expectedLineH = (f != null ? f.lineHeight : 9) + 2;
-        if (Math.abs(height - expectedLineH) <= 2)
-        {
-            diversifiedchatbar$pendingBgX1 = x1;
-            diversifiedchatbar$pendingBgY1 = y1;
-            diversifiedchatbar$pendingBgX2 = x2;
-            diversifiedchatbar$pendingBgY2 = y2;
-            diversifiedchatbar$pendingBgColor = color;
-            diversifiedchatbar$hasPendingBg = true;
-            return;
-        }
-        guiGraphics.fill(x1, y1, x2, y2, color);
+        diversifiedchatbar$pendingBgX1 = x1;
+        diversifiedchatbar$pendingBgY1 = y1;
+        diversifiedchatbar$pendingBgX2 = x2;
+        diversifiedchatbar$pendingBgY2 = y2;
+        diversifiedchatbar$pendingBgColor = color;
+        diversifiedchatbar$hasPendingBg = true;
     }
 
     @Redirect(
@@ -120,15 +112,15 @@ public class ChatComponentMixin
         }
         if (actualRenderH <= 0) actualRenderH = maxSize;
 
-        int neededLines = Math.max(1, (int) Math.ceil((double) actualRenderH / lineHeight));
-        int extraSpace = Math.max(actualRenderH, (neededLines - 1) * lineHeight) + lineHeight / 2;
+        int extraSpace = Math.max(actualRenderH - font.lineHeight, 0) + 1;
         int prevExtraHeightBelow = diversifiedchatbar$extraHeightBelow;
 
         
         if (diversifiedchatbar$hasPendingBg)
         {
-            int bgTop = adjustedY - actualRenderH;
-            int bgBottom = diversifiedchatbar$pendingBgY2 - prevExtraHeightBelow;
+            int refBottom = diversifiedchatbar$pendingBgY2 - prevExtraHeightBelow;
+            int bgTop = refBottom - actualRenderH - 2;
+            int bgBottom = refBottom;
             guiGraphics.fill(diversifiedchatbar$pendingBgX1, bgTop, diversifiedchatbar$pendingBgX2, bgBottom, diversifiedchatbar$pendingBgColor);
             diversifiedchatbar$hasPendingBg = false;
         }

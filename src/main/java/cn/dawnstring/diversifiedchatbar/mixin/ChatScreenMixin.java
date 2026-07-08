@@ -44,6 +44,24 @@ public class ChatScreenMixin
     @Unique
     private static final int EMOJIS_PER_PAGE = PICKER_COLS * PICKER_ROWS;
 
+    @Unique
+    private int diversifiedchatbar$panelX = 0;
+    @Unique
+    private int diversifiedchatbar$panelY = 0;
+    @Unique
+    private int diversifiedchatbar$panelWidth = 0;
+    @Unique
+    private int diversifiedchatbar$panelHeight = 0;
+
+    @Unique
+    private void diversifiedchatbar$updatePanelBounds()
+    {
+        diversifiedchatbar$panelWidth = PICKER_COLS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING;
+        diversifiedchatbar$panelHeight = PICKER_ROWS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING + 14;
+        diversifiedchatbar$panelX = input.getX() + input.getWidth() - diversifiedchatbar$panelWidth - 4;
+        diversifiedchatbar$panelY = input.getY() - diversifiedchatbar$panelHeight - 4;
+    }
+
     @Inject(method = "render", at = @At("TAIL"))
     private void onRenderTail(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci)
     {
@@ -58,21 +76,17 @@ public class ChatScreenMixin
         List<Emoji> emojis = manager.getAllEmojis();
         if (emojis.isEmpty()) return;
 
-        int guiWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
         int totalPages = Math.max(1, (int) Math.ceil((double) emojis.size() / EMOJIS_PER_PAGE));
         if (diversifiedchatbar$pickerPage >= totalPages)
         {
             diversifiedchatbar$pickerPage = totalPages - 1;
         }
 
-        
-        int panelWidth = PICKER_COLS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING;
-        int panelHeight = PICKER_ROWS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING + 14;
-        int panelX = input.getX() + input.getWidth() - panelWidth - 4;
-        int panelY = input.getY() - panelHeight - 4;
+        diversifiedchatbar$updatePanelBounds();
 
-        
-        guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xFF111111);
+        guiGraphics.fill(diversifiedchatbar$panelX, diversifiedchatbar$panelY,
+                diversifiedchatbar$panelX + diversifiedchatbar$panelWidth,
+                diversifiedchatbar$panelY + diversifiedchatbar$panelHeight, 0xFF111111);
 
         int startIndex = diversifiedchatbar$pickerPage * EMOJIS_PER_PAGE;
         int endIndex = Math.min(startIndex + EMOJIS_PER_PAGE, emojis.size());
@@ -82,8 +96,8 @@ public class ChatScreenMixin
             int indexInPage = i - startIndex;
             int col = indexInPage % PICKER_COLS;
             int row = indexInPage / PICKER_COLS;
-            int ex = panelX + PICKER_PADDING + col * (EMOJI_CELL_SIZE + PICKER_PADDING);
-            int ey = panelY + PICKER_PADDING + row * (EMOJI_CELL_SIZE + PICKER_PADDING);
+            int ex = diversifiedchatbar$panelX + PICKER_PADDING + col * (EMOJI_CELL_SIZE + PICKER_PADDING);
+            int ey = diversifiedchatbar$panelY + PICKER_PADDING + row * (EMOJI_CELL_SIZE + PICKER_PADDING);
 
             Emoji emoji = emojis.get(i);
             int renderSize = Math.min(EMOJI_CELL_SIZE - 6, Math.min(emoji.width(), emoji.height()));
@@ -96,17 +110,16 @@ public class ChatScreenMixin
                 guiGraphics.drawString(Minecraft.getInstance().font, ":" + emoji.shortcode() + ":", ex, ey + EMOJI_CELL_SIZE + 2, 0xCCCCCC, false);
             }
 
-            
-            int tex1 = ex + ox;
-            int tey1 = ey + oy;
-            guiGraphics.blit(emoji.textureLocation(), tex1, tey1, renderSize, renderSize,
+            guiGraphics.blit(emoji.textureLocation(), ex + ox, ey + oy, renderSize, renderSize,
                     0, 0, emoji.width(), emoji.height(), emoji.width(), emoji.height());
         }
 
         Font font = Minecraft.getInstance().font;
         String pageText = (diversifiedchatbar$pickerPage + 1) + "/" + totalPages;
         int pageTextWidth = font.width(pageText);
-        guiGraphics.drawString(font, pageText, panelX + (panelWidth - pageTextWidth) / 2, panelY + panelHeight - 12, 0x888888, false);
+        guiGraphics.drawString(font, pageText,
+                diversifiedchatbar$panelX + (diversifiedchatbar$panelWidth - pageTextWidth) / 2,
+                diversifiedchatbar$panelY + diversifiedchatbar$panelHeight - 12, 0x888888, false);
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
@@ -137,13 +150,8 @@ public class ChatScreenMixin
         List<Emoji> emojis = manager.getAllEmojis();
         if (emojis.isEmpty()) return;
 
-        int guiWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        diversifiedchatbar$updatePanelBounds();
         int totalPages = Math.max(1, (int) Math.ceil((double) emojis.size() / EMOJIS_PER_PAGE));
-
-        int panelWidth = PICKER_COLS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING;
-        int panelHeight = PICKER_ROWS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING + 14;
-        int panelX = input.getX() + input.getWidth() - panelWidth - 4;
-        int panelY = input.getY() - panelHeight - 4;
 
         int startIndex = diversifiedchatbar$pickerPage * EMOJIS_PER_PAGE;
         int endIndex = Math.min(startIndex + EMOJIS_PER_PAGE, emojis.size());
@@ -153,8 +161,8 @@ public class ChatScreenMixin
             int indexInPage = i - startIndex;
             int col = indexInPage % PICKER_COLS;
             int row = indexInPage / PICKER_COLS;
-            int ex = panelX + PICKER_PADDING + col * (EMOJI_CELL_SIZE + PICKER_PADDING);
-            int ey = panelY + PICKER_PADDING + row * (EMOJI_CELL_SIZE + PICKER_PADDING);
+            int ex = diversifiedchatbar$panelX + PICKER_PADDING + col * (EMOJI_CELL_SIZE + PICKER_PADDING);
+            int ey = diversifiedchatbar$panelY + PICKER_PADDING + row * (EMOJI_CELL_SIZE + PICKER_PADDING);
 
             if (mouseX >= ex && mouseX <= ex + EMOJI_CELL_SIZE && mouseY >= ey && mouseY <= ey + EMOJI_CELL_SIZE)
             {
@@ -174,22 +182,19 @@ public class ChatScreenMixin
     {
         if (!diversifiedchatbar$showPicker) return;
 
-        EmojiManager manager = EmojiManager.getInstance();
-        if (!manager.isLoaded()) return;
+        diversifiedchatbar$updatePanelBounds();
 
-        List<Emoji> emojis = manager.getAllEmojis();
-        if (emojis.isEmpty()) return;
-
-        int totalPages = Math.max(1, (int) Math.ceil((double) emojis.size() / EMOJIS_PER_PAGE));
-
-        int guiWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        int panelWidth = PICKER_COLS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING;
-        int panelHeight = PICKER_ROWS * (EMOJI_CELL_SIZE + PICKER_PADDING) + PICKER_PADDING + 14;
-        int panelX = input.getX() + input.getWidth() - panelWidth - 4;
-        int panelY = input.getY() - panelHeight - 4;
-
-        if (mouseX >= panelX && mouseX <= panelX + panelWidth && mouseY >= panelY && mouseY <= panelY + panelHeight)
+        if (mouseX >= diversifiedchatbar$panelX && mouseX <= diversifiedchatbar$panelX + diversifiedchatbar$panelWidth
+                && mouseY >= diversifiedchatbar$panelY && mouseY <= diversifiedchatbar$panelY + diversifiedchatbar$panelHeight)
         {
+            EmojiManager manager = EmojiManager.getInstance();
+            if (!manager.isLoaded()) return;
+
+            List<Emoji> emojis = manager.getAllEmojis();
+            if (emojis.isEmpty()) return;
+
+            int totalPages = Math.max(1, (int) Math.ceil((double) emojis.size() / EMOJIS_PER_PAGE));
+
             if (scrollY < 0)
             {
                 diversifiedchatbar$pickerPage = Math.min(diversifiedchatbar$pickerPage + 1, totalPages - 1);

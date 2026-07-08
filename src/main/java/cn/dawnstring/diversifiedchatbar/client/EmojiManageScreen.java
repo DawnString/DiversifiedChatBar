@@ -66,18 +66,6 @@ public class EmojiManageScreen extends Screen
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
     {
-        
-        if (emojis != null)
-        {
-            for (Emoji e : emojis)
-            {
-                if (e.isAnimated())
-                {
-                    EmojiManager.getInstance().updateAnimatedTexture(e);
-                }
-            }
-        }
-
         renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -97,8 +85,9 @@ public class EmojiManageScreen extends Screen
         int startX = (width - gridWidth) / 2;
 
         deleteHoverEmoji = null;
+        EmojiManager emojiManager = EmojiManager.getInstance();
 
-        
+
         for (int i = 0; i < emojis.size(); i++)
         {
             Emoji emoji = emojis.get(i);
@@ -108,6 +97,11 @@ public class EmojiManageScreen extends Screen
             int y = startY + row * (CELL_SIZE + PADDING) - scrollOffset;
 
             if (y < HEADER_HEIGHT - CELL_SIZE || y > height - 50) continue;
+
+            if (emoji.isAnimated())
+            {
+                emojiManager.updateAnimatedTexture(emoji);
+            }
 
             guiGraphics.fill(x, y, x + CELL_SIZE, y + CELL_SIZE, 0x33FFFFFF);
 
@@ -115,26 +109,11 @@ public class EmojiManageScreen extends Screen
             {
                 guiGraphics.fill(x, y, x + CELL_SIZE, y + CELL_SIZE, 0x44FFFFFF);
             }
-        }
-
-        
-        guiGraphics.flush();
-
-        
-        for (int i = 0; i < emojis.size(); i++)
-        {
-            Emoji emoji = emojis.get(i);
-            int col = i % GRID_COLS;
-            int row = i / GRID_COLS;
-            int x = startX + col * (CELL_SIZE + PADDING);
-            int y = startY + row * (CELL_SIZE + PADDING) - scrollOffset;
-
-            if (y < HEADER_HEIGHT - CELL_SIZE || y > height - 50) continue;
 
             int renderSize = Math.min(CELL_SIZE - 16, Math.min(emoji.width(), emoji.height()));
             int ox = (CELL_SIZE - renderSize) / 2;
             int oy = (CELL_SIZE - renderSize) / 2 - 6;
-            
+
             RenderSystem.setShaderTexture(0, emoji.textureLocation());
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             var pose = guiGraphics.pose().last().pose();
@@ -163,7 +142,7 @@ public class EmojiManageScreen extends Screen
         int hintWidth = font.width(hint);
         guiGraphics.drawString(font, hint, (width - hintWidth) / 2, height - 50, 0x666666, false);
 
-        
+
         diversifiedchatbar$renderSizeControl(guiGraphics);
     }
 
@@ -179,12 +158,12 @@ public class EmojiManageScreen extends Screen
         int btnH = 14;
         int bx = lblX - 4 - SIZE_BTN_W;
 
-        
+
         int decColor = 0xFF444444;
         guiGraphics.fill(bx, btnY, bx + SIZE_BTN_W, btnY + btnH, decColor);
         guiGraphics.drawString(font, "-", bx + 4, btnY + 1, 0xFFFFFF, false);
 
-        
+
         int incX = lblX + lblW + 4;
         guiGraphics.fill(incX, btnY, incX + SIZE_BTN_W, btnY + btnH, decColor);
         guiGraphics.drawString(font, "+", incX + 3, btnY + 1, 0xFFFFFF, false);
@@ -212,7 +191,7 @@ public class EmojiManageScreen extends Screen
             int btnY = 8;
             int btnH = 14;
 
-            
+
             int decX = lblX - 4 - SIZE_BTN_W;
             if (mx >= decX && mx <= decX + SIZE_BTN_W && my >= btnY && my <= btnY + btnH)
             {
@@ -222,7 +201,7 @@ public class EmojiManageScreen extends Screen
                 return true;
             }
 
-            
+
             int incX = lblX + lblW + 4;
             if (mx >= incX && mx <= incX + SIZE_BTN_W && my >= btnY && my <= btnY + btnH)
             {
@@ -251,7 +230,7 @@ public class EmojiManageScreen extends Screen
         Minecraft mc = Minecraft.getInstance();
         if (mc.getConnection() != null && !mc.isLocalServer())
         {
-            
+
             int idx = 0;
             for (Path path : paths)
             {
@@ -264,18 +243,14 @@ public class EmojiManageScreen extends Screen
                     if (idx > 0) shortcode += "_" + idx;
 
                     byte[] imageData;
-                    if (name.endsWith(".gif"))
+                    if (name.endsWith(".gif") || name.endsWith(".png"))
                     {
-                        
-                        imageData = Files.readAllBytes(path);
-                    }
-                    else if (name.endsWith(".png"))
-                    {
+
                         imageData = Files.readAllBytes(path);
                     }
                     else
                     {
-                        
+
                         BufferedImage bi = ImageIO.read(path.toFile());
                         if (bi == null) continue;
                         BufferedImage argb = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -297,7 +272,7 @@ public class EmojiManageScreen extends Screen
         }
         else
         {
-            
+
             for (Path path : paths)
             {
                 String name = path.getFileName().toString().toLowerCase();

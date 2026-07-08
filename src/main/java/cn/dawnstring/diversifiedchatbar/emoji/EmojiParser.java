@@ -58,7 +58,7 @@ public class EmojiParser
         if (!manager.isLoaded()) return text;
 
         Matcher matcher = SHORTCODE_PATTERN.matcher(text);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (matcher.find())
         {
             String shortcode = matcher.group(1);

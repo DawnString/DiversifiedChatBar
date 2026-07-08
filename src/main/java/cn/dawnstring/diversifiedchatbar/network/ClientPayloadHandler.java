@@ -11,7 +11,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 public class ClientPayloadHandler
 {
@@ -22,7 +21,7 @@ public class ClientPayloadHandler
             Minecraft mc = Minecraft.getInstance();
             EmojiManager manager = EmojiManager.getInstance();
 
-            
+
             manager.clearServerEmoji();
 
             for (EmojiPayloads.EmojiEntry entry : payload.entries())
@@ -30,11 +29,11 @@ public class ClientPayloadHandler
                 try
                 {
                     byte[] data = entry.imageData();
-                    boolean isGif = isGifData(data);
+                    boolean isGif = EmojiManager.isGifData(data);
 
                     if (isGif)
                     {
-                        
+
                         manager.loadServerGif(entry.owner(), entry.shortcode(), data);
                     }
                     else
@@ -67,12 +66,5 @@ public class ClientPayloadHandler
             }
             DiversifiedChatBar.LOGGER.info("Received {} server emoji", payload.entries().size());
         });
-    }
-
-    private static boolean isGifData(byte[] data)
-    {
-        if (data.length < 6) return false;
-        String magic = new String(data, 0, 6, java.nio.charset.StandardCharsets.US_ASCII);
-        return magic.equals("GIF87a") || magic.equals("GIF89a");
     }
 }
